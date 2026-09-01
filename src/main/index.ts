@@ -6,6 +6,7 @@ import { loadSettings, saveSettings } from './settings'
 import { scanReadiness } from './readiness'
 import { cancelActiveJob, runJob } from './jobs'
 import { bootstrapCliPath } from './process'
+import { getAppIconPath } from './paths'
 import { initAutoUpdater } from './updater'
 
 // Linux userland / restricted environments often lack a working chrome-sandbox.
@@ -26,6 +27,7 @@ function createWindow(): void {
     show: false,
     title: 'SSHR Database Suite',
     backgroundColor: '#0f1c1f',
+    icon: getAppIconPath(),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,

@@ -113,7 +113,11 @@ That uploads the AppImage (and `.deb`) to a GitHub Release. Friends on the AppIm
 
 **Note:** Auto-update works reliably for **AppImage**. The `.deb` is still fine to hand out, but friends on `.deb` should reinstall newer packages manually (or switch to AppImage).
 
-If the repo is **private**, set `GH_TOKEN` (or `GITHUB_TOKEN`) in the environment for the *running* app as well, or keep the repo public.
+**The GitHub repo must be public.** Auto-update reads `https://github.com/linphonesmilax/sshr-database-suite/releases.atom`. Private repos return 404, so friends (and you, without a token in the app) cannot check for updates.
+
+On GitHub: repo → **Settings** → **General** → **Danger zone** → **Change repository visibility** → **Public**.
+
+Do not put `GH_TOKEN` inside the app. Tokens stay on your machine for `pnpm release:linux` only.
 
 ## Typical workflow
 

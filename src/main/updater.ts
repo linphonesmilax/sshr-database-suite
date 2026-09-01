@@ -10,6 +10,17 @@ function broadcast(status: UpdateStatus): void {
   }
 }
 
+function friendlyUpdateError(err: unknown): string {
+  const raw = err instanceof Error ? err.message : String(err)
+  if (/404|releases\.atom|authentication token/i.test(raw)) {
+    return 'Could not check for updates. The GitHub repo must be public (Settings → Change visibility).'
+  }
+  if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|net::/i.test(raw)) {
+    return 'Could not check for updates. Check your internet connection.'
+  }
+  return 'Could not check for updates.'
+}
+
 /**
  * GitHub Releases auto-update (AppImage on Linux).
  * No-op in development; requires a published release with matching channel files.
@@ -35,8 +46,7 @@ export function initAutoUpdater(): void {
         version: result?.updateInfo?.version
       } satisfies UpdateStatus
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
-      const status: UpdateStatus = { phase: 'error', message }
+      const status: UpdateStatus = { phase: 'error', message: friendlyUpdateError(err) }
       broadcast(status)
       return status
     }
@@ -95,15 +105,14 @@ export function initAutoUpdater(): void {
   autoUpdater.on('error', (err) => {
     broadcast({
       phase: 'error',
-      message: err?.message || String(err)
+      message: friendlyUpdateError(err)
     })
   })
 
   // Delay so the window can subscribe first.
   setTimeout(() => {
     autoUpdater.checkForUpdates().catch((err: unknown) => {
-      const message = err instanceof Error ? err.message : String(err)
-      broadcast({ phase: 'error', message })
+      broadcast({ phase: 'error', message: friendlyUpdateError(err) })
     })
   }, 4000)
 }

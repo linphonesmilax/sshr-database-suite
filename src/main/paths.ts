@@ -19,6 +19,16 @@ export function getProjectRoot(): string {
   return fromOut
 }
 
+/** Window / taskbar icon. Packaged extraResources, otherwise repo `build/icon.png`. */
+export function getAppIconPath(): string | undefined {
+  const candidates = [
+    join(process.resourcesPath, 'icon.png'),
+    join(getProjectRoot(), 'build', 'icon.png'),
+    join(__dirname, '../../build/icon.png')
+  ]
+  return candidates.find((p) => existsSync(p))
+}
+
 /** Dev: project db_backups/. Packaged: ~/Documents/SSHR Database Suite/db_backups */
 export function getDefaultBackupDir(): string {
   if (app.isPackaged) {
