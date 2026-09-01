@@ -12,8 +12,8 @@ function broadcast(status: UpdateStatus): void {
 
 function friendlyUpdateError(err: unknown): string {
   const raw = err instanceof Error ? err.message : String(err)
-  if (/404|releases\.atom|authentication token/i.test(raw)) {
-    return 'Could not check for updates. The GitHub repo must be public (Settings → Change visibility).'
+  if (/404|releases\.atom|authentication token|Unable to find latest version/i.test(raw)) {
+    return 'Could not check for updates. Publish a non-draft GitHub Release (Releases → Edit draft → Publish).'
   }
   if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|net::/i.test(raw)) {
     return 'Could not check for updates. Check your internet connection.'

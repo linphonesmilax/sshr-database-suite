@@ -113,9 +113,13 @@ That uploads the AppImage (and `.deb`) to a GitHub Release. Friends on the AppIm
 
 **Note:** Auto-update works reliably for **AppImage**. The `.deb` is still fine to hand out, but friends on `.deb` should reinstall newer packages manually (or switch to AppImage).
 
-**The GitHub repo must be public.** Auto-update reads `https://github.com/linphonesmilax/sshr-database-suite/releases.atom`. Private repos return 404, so friends (and you, without a token in the app) cannot check for updates.
+**Requirements for auto-update:**
 
-On GitHub: repo → **Settings** → **General** → **Danger zone** → **Change repository visibility** → **Public**.
+1. Repo must be **public** (Settings → Danger zone → Change visibility).
+2. The GitHub Release must be **published**, not a draft. Drafts are invisible to the app.
+3. `package.json` uses `"releaseType": "release"` so `pnpm release:linux` publishes immediately.
+
+If you already have a draft: open [Releases](https://github.com/linphonesmilax/sshr-database-suite/releases) → open the draft → **Publish release**.
 
 Do not put `GH_TOKEN` inside the app. Tokens stay on your machine for `pnpm release:linux` only.
 

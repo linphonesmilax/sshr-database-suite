@@ -70,7 +70,8 @@
       {
         "provider": "github",
         "owner": "linphonesmilax",
-        "repo": "sshr-database-suite"
+        "repo": "sshr-database-suite",
+        "releaseType": "release"
       }
     ],
     "linux": {
