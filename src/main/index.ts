@@ -3,6 +3,7 @@ import { join } from 'path'
 import { existsSync } from 'fs'
 import { AppSettings, JobInput, ReadinessReport } from '../shared/types'
 import { loadSettings, saveSettings } from './settings'
+import { getBackupPassword, setBackupPassword } from './secrets'
 import { scanReadiness } from './readiness'
 import { cancelActiveJob, runJob } from './jobs'
 import { bootstrapCliPath } from './process'
@@ -63,6 +64,11 @@ function registerIpc(): void {
 
   ipcMain.handle('settings:set', (_event, partial: Partial<AppSettings>) => {
     return saveSettings(partial)
+  })
+
+  ipcMain.handle('secrets:getBackupPassword', () => getBackupPassword())
+  ipcMain.handle('secrets:setBackupPassword', (_event, password: string) => {
+    setBackupPassword(typeof password === 'string' ? password : '')
   })
 
   ipcMain.handle(

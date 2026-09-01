@@ -100,7 +100,7 @@ export default function RestorePage() {
 
   const needsConfirm = recreate || dropOnly
   const expectedConfirm = dropOnly ? 'DROP' : recreate ? 'RECREATE' : ''
-  const confirmOk = !needsConfirm || confirmText === expectedConfirm
+  const confirmOk = !needsConfirm || confirmText.trim().toUpperCase() === expectedConfirm
 
   const preview = useMemo(() => {
     const parts = [
@@ -192,13 +192,13 @@ export default function RestorePage() {
     <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,32rem)] 2xl:grid-cols-[minmax(0,1fr)_minmax(0,42rem)]">
       <div className="space-y-5">
         <PageHeader
-          className="mb-0"
+          className="mb-2"
           title="Restore"
           subtitle="Restore dumps into local PostgreSQL. Destructive options require typed confirmation."
           actions={
             <Button
               variant={needsConfirm ? 'danger' : 'primary'}
-              disabled={job.active || !confirmOk}
+              disabled={job.active}
               onClick={() => void run()}
               icon={actionIcon}
             >
@@ -335,7 +335,7 @@ export default function RestorePage() {
             <Button
               className="w-full"
               variant={needsConfirm ? 'danger' : 'primary'}
-              disabled={job.active || !confirmOk}
+              disabled={job.active}
               onClick={() => void run()}
               icon={needsConfirm ? <AlertTriangle size={16} strokeWidth={1.75} /> : actionIcon}
             >

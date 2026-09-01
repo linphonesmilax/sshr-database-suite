@@ -99,6 +99,9 @@ function StatusChip({
       </span>
     )
   }
+  if (exitCode == null) {
+    return null
+  }
   return (
     <span className="rounded-full bg-[color-mix(in_srgb,var(--danger)_18%,transparent)] px-2.5 py-0.5 font-sans text-[11px] font-medium text-[var(--danger)]">
       Problem
@@ -178,7 +181,8 @@ export function LogConsole({
     el.scrollTop = el.scrollHeight
   }, [visible.length, job.active, showTechnical])
 
-  const failed = !job.active && job.id && !job.cancelled && job.exitCode !== 0
+  const failed =
+    !job.active && Boolean(job.id) && !job.cancelled && job.exitCode != null && job.exitCode !== 0
 
   return (
     <Panel className="flex h-full min-h-[24rem] max-h-[calc(100vh-4rem)] flex-col overflow-hidden xl:sticky xl:top-8 xl:self-start xl:h-[calc(100vh-4rem)] xl:max-h-[calc(100vh-4rem)]">

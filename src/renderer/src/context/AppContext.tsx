@@ -71,13 +71,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const clearJobLog = useCallback(() => {
-    setJob((prev) => ({
-      ...idleJob,
-      active: prev.active,
-      id: prev.id,
-      kind: prev.kind,
-      commandPreview: prev.commandPreview
-    }))
+    setJob((prev) => (prev.active ? prev : idleJob))
   }, [])
 
   useEffect(() => {

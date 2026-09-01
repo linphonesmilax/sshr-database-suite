@@ -33,14 +33,22 @@ export function parseLogLine(
   raw: string
 ): ParsedLogLine {
   const trimmed = raw.trimEnd()
+  const meta = trimmed.match(META_RE)
+  const message = meta ? meta[2] : trimmed
 
-  if (stream === 'stderr' || isErrorLine(trimmed)) {
-    return { index, stream, raw: trimmed, kind: 'error', message: trimmed }
+  if (isWarnLine(message)) {
+    return { index, stream, raw: trimmed, kind: 'warn', time: meta?.[1], message }
   }
 
-  const meta = trimmed.match(META_RE)
+  if (isPlaceholderSummary(message)) {
+    return { index, stream, raw: trimmed, kind: 'noise', time: meta?.[1], message }
+  }
+
+  if (isErrorLine(message)) {
+    return { index, stream, raw: trimmed, kind: 'error', time: meta?.[1], message }
+  }
+
   if (meta) {
-    const message = meta[2]
     return {
       index,
       stream,
@@ -78,19 +86,36 @@ export function parseLogLine(
   return { index, stream, raw: trimmed, kind: 'output', message: trimmed }
 }
 
+function isWarnLine(line: string): boolean {
+  return (
+    /^npm warn\b/i.test(line) ||
+    /^npm warn /i.test(line) ||
+    /^pnpm warn\b/i.test(line) ||
+    /^warn\b/i.test(line) ||
+    /^warning:/i.test(line)
+  )
+}
+
+function isPlaceholderSummary(line: string): boolean {
+  return /^(FAILED|SKIPPED|OK):\s*\(none\)\s*$/i.test(line)
+}
+
 function isErrorLine(line: string): boolean {
+  if (isWarnLine(line) || isPlaceholderSummary(line)) return false
   return (
     /ERROR:/i.test(line) ||
     /FATAL:/i.test(line) ||
     /Command failed/i.test(line) ||
     /authentication failed/i.test(line) ||
-    /^\[cancelled\]/i.test(line)
+    /^\[cancelled\]/i.test(line) ||
+    (/^FAILED:/i.test(line) && !/\(none\)/i.test(line))
   )
 }
 
 function classifyMetaMessage(message: string): LogLineKind {
   if (message.startsWith('> ')) return 'command'
   if (message.startsWith('DRY-RUN:')) return 'dry-run'
+  if (isPlaceholderSummary(message)) return 'noise'
   if (/^Done\.$|^OK:|^=== /.test(message)) return 'success'
   if (/SKIP|WARN/i.test(message)) return 'warn'
   if (/FAILED/i.test(message)) return 'error'
@@ -103,7 +128,8 @@ export function extractActionableErrors(lines: ParsedLogLine[]): string[] {
     if (line.kind !== 'error') continue
     const msg = line.message
     if (/^Command failed/i.test(msg)) continue
-    if (/^npm warn/i.test(msg)) continue
+    if (isWarnLine(msg)) continue
+    if (isPlaceholderSummary(msg)) continue
     if (/^warn The configuration property/i.test(msg)) continue
     errors.push(msg)
   }

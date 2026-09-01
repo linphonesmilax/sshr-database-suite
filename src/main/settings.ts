@@ -15,10 +15,12 @@ function stripLegacy(partial: Partial<AppSettings> & Record<string, unknown>): P
   const {
     migrateScript: _m,
     manageScript: _n,
+    lastBackupPassword: _p,
     ...rest
   } = partial as Partial<AppSettings> & {
     migrateScript?: string
     manageScript?: string
+    lastBackupPassword?: string
   }
   return rest
 }

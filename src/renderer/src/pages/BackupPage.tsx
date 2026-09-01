@@ -70,6 +70,7 @@ export default function BackupPage() {
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<{ backupDir?: string }>({})
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const passwordSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!settings) return
@@ -79,6 +80,12 @@ export default function BackupPage() {
     setBackupDir(settings.lastBackupDir)
     setFormat(settings.lastBackupFormat)
   }, [settings])
+
+  useEffect(() => {
+    void window.api.getBackupPassword().then((saved) => {
+      if (saved) setPassword(saved)
+    })
+  }, [])
 
   useEffect(() => {
     if (!backupDir.trim()) return
@@ -153,6 +160,7 @@ export default function BackupPage() {
       lastBackupDir: backupDir,
       lastBackupFormat: format
     })
+    await window.api.setBackupPassword(password)
     try {
       await window.api.runJob({
         kind: 'backup',
@@ -207,11 +215,18 @@ export default function BackupPage() {
               </Field>
               <Field
                 label="Password"
-                hint="Must match manage-databases.sh (its built-in default or PGPASSWORD). Leave empty only if you launched the app with PGPASSWORD set."
+                hint="Saved on this device. Must match manage-databases.sh (or PGPASSWORD). Leave empty only if you launched the app with PGPASSWORD set."
               >
                 <PasswordInput
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    const next = e.target.value
+                    setPassword(next)
+                    if (passwordSaveRef.current) clearTimeout(passwordSaveRef.current)
+                    passwordSaveRef.current = setTimeout(() => {
+                      void window.api.setBackupPassword(next)
+                    }, 400)
+                  }}
                   autoComplete="off"
                 />
               </Field>

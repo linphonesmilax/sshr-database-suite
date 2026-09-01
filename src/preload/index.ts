@@ -16,6 +16,9 @@ const api = {
   getSettings: (): Promise<AppSettings> => ipcRenderer.invoke('settings:get'),
   setSettings: (partial: Partial<AppSettings>): Promise<AppSettings> =>
     ipcRenderer.invoke('settings:set', partial),
+  getBackupPassword: (): Promise<string> => ipcRenderer.invoke('secrets:getBackupPassword'),
+  setBackupPassword: (password: string): Promise<void> =>
+    ipcRenderer.invoke('secrets:setBackupPassword', password),
   scanReadiness: (backupDir?: string): Promise<ReadinessReport> =>
     ipcRenderer.invoke('readiness:scan', backupDir),
   pickDir: (title?: string): Promise<string | null> =>
