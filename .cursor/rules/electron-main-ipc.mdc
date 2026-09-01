@@ -1,0 +1,46 @@
+---
+description: Electron main process, preload bridge, and IPC conventions
+globs: src/main/**/*,src/preload/**/*
+alwaysApply: false
+---
+
+# Electron Main + IPC
+
+## IPC naming
+
+Use `domain:action` channels: `settings:get`, `settings:set`, `readiness:scan`, `dialog:pickDir`, `shell:openPath`, `job:run`, `job:cancel`.
+
+Streaming events (main → renderer): `job:started`, `job:log`, `job:ended`.
+
+## Adding a feature (4-file pattern)
+
+1. Type in `src/shared/types.ts`
+2. Logic in `src/main/<domain>.ts`
+3. `ipcMain.handle(...)` in `src/main/index.ts`
+4. Method on `api` in `src/preload/index.ts` (types flow via `WindowApi` / `preload/index.d.ts`)
+
+## Jobs
+
+- `job:run` returns immediately with `{ id, commandPreview }`; work runs async
+- Stream logs via `sender.send('job:log', ...)` and finish with `job:ended`
+- Use `ProcessController` from `process.ts` for spawn/cancel
+- Throw `JobCancelledError` when user cancels
+- Only one `activeJob` — reject or queue if another is running
+
+## Security
+
+- No secrets in `settings.ts` / `settings.json`
+- Validate DB names before embedding in SQL (`databases.ts`)
+- Keep `contextIsolation: true`, `nodeIntegration: false` in BrowserWindow
+
+## Platform
+
+- Linux: `no-sandbox` already set in `index.ts`
+- Optional GPU disable: `SSHR_DB_SUITE_DISABLE_GPU=1`
+- Packaged backup dir: `~/Documents/SSHR Database Suite/db_backups` (see `paths.ts`)
+
+## Do not
+
+- Add `.sh` scripts — TypeScript orchestration only
+- Put `fs`, `child_process`, or `ipcRenderer` in renderer code
+- Block `ipcMain.handle` on long-running CLI work

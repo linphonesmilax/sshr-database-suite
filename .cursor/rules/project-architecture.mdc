@@ -1,0 +1,38 @@
+---
+description: SSHR Database Suite architecture map and file index
+alwaysApply: true
+---
+
+# Project Architecture
+
+Electron 37 + electron-vite 4 + React 19 + Tailwind 4 desktop app for SSHR database backup, restore, and migrate. All CLI orchestration runs in TypeScript in the main process — no shell scripts.
+
+## File index
+
+| Task | Start here |
+|------|------------|
+| New job type / CLI work | `src/main/jobs.ts` + domain module (`migrate.ts`, `databases.ts`, `process.ts`) |
+| IPC channel | `src/main/index.ts` → `src/preload/index.ts` |
+| Shared types / constants | `src/shared/types.ts` |
+| New screen | `src/renderer/src/pages/*Page.tsx` + route in `App.tsx` |
+| Reusable UI | `src/renderer/src/components/ui.tsx` |
+| Status / logs UX | `LogConsole.tsx` + `src/renderer/src/lib/logFormat.ts` |
+| Settings persistence | `src/main/settings.ts` |
+| Readiness scan | `src/main/readiness.ts` |
+| Packaged paths | `src/main/paths.ts` |
+| Build / installers | `package.json` `build` field; run `pnpm dist:linux` |
+
+## Process boundaries
+
+- **main** — spawn, fs, settings, dialogs, all side effects
+- **preload** — `contextBridge` → `window.api` only
+- **renderer** — React UI; calls `window.api`, never Node/Electron APIs
+- **shared** — types and constants imported by all three
+
+## Hard rules
+
+- One active job at a time (`src/main/jobs.ts`)
+- Passwords in job input only — never persist in `settings.json`
+- Destructive restore requires typed `RECREATE` or `DROP`
+- Validate database names before SQL
+- Use relative imports to shared types (match existing code; `@shared`/`@renderer` aliases exist but are unused — do not mix styles in one change)

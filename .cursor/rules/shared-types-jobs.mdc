@@ -1,0 +1,45 @@
+---
+description: Shared types, job unions, and domain constants
+globs: src/shared/**/*
+alwaysApply: false
+---
+
+# Shared Types + Jobs
+
+## Job inputs
+
+Discriminated unions with `kind`:
+
+- `'migrate'` → `MigrateJobInput`
+- `'backup'` → `BackupJobInput`
+- `'restore'` → `RestoreJobInput`
+
+Extend the union in `types.ts` before adding handlers in `jobs.ts`.
+
+## Constants
+
+Define here before hardcoding elsewhere:
+
+- `SERVICES` — kebab-case microservice dirs (`auth-service`, …)
+- `DATABASES` — snake_case PG names (`sshr_auth`, …)
+- `PRESETS` — connection presets (`cloudBackup`, `localRestore`)
+- `MICROSERVICE_ROOT_REL` — default migrate root relative path
+
+## Settings
+
+- `AppSettings` — persisted non-secret prefs only
+- `defaultSettings(homeDir, projectBackupDir)` — call from `settings.ts`
+- Packaged vs dev backup dir resolved in `main/paths.ts`, not in types
+
+## Events
+
+Job streaming types: `JobStartedEvent`, `JobLogEvent`, `JobEndedEvent`, `JobState`.
+
+## Naming
+
+| Domain | Convention | Example |
+|--------|------------|-----------|
+| Services | kebab-case | `code-gen-service` |
+| Databases | snake_case | `sshr_code_gen` |
+| Job kinds | lowercase literal | `'backup'` |
+| IPC channels | domain:action | `job:run` |

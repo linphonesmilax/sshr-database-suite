@@ -1,0 +1,13 @@
+node_modules
+out
+dist
+release/
+.DS_Store
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.local
+db_backups/*.sql
+db_backups/*.dump
+db_backups/*.zip

@@ -1,0 +1,49 @@
+---
+description: React renderer pages, components, and normal-user UX conventions
+globs: src/renderer/**/*
+alwaysApply: false
+---
+
+# React Renderer + UI
+
+## Structure
+
+- Functional components; pages are default exports named `*Page`
+- **HashRouter** only (`main.tsx`) — required for Electron file URLs
+- Add routes under the shell layout in `App.tsx`
+
+## State
+
+- Global: `useApp()` from `context/AppContext.tsx` — settings, readiness, job state
+- Do not duplicate job IPC listeners in pages; context owns subscriptions
+- Local form state stays in the page component
+
+## Page layout pattern
+
+```
+PageHeader (title, subtitle, actions)
+  → Panel / SectionLabel sections
+  → form fields (local state)
+  → LogConsole (job output)
+```
+
+Reuse primitives from `components/ui.tsx`: `PageHeader`, `Panel`, `Button`, `Field`, `SectionLabel`, etc.
+
+## Styling
+
+- CSS variables (`--bg`, `--accent`, `--text`, …) + Tailwind utilities
+- Icons from `lucide-react` only — avoid new UI libraries
+
+## Normal-user UX
+
+- Status panel shows plain-English headline and hints
+- Raw logs collapsed under **Technical details** by default
+- Extend `logFormat.ts` and `LogConsole.tsx` — not page-local log rendering
+- Cancel button label: **Stop**
+- Disable run buttons when `job.active`
+
+## Job pages
+
+- Backup, Restore, Migrate each call `window.api.runJob(input)` with typed `JobInput`
+- Persist non-secret prefs via `updateSettings()` after successful form changes
+- Use `Pickers.tsx` for directory selection

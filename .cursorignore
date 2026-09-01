@@ -1,0 +1,9 @@
+node_modules/
+out/
+release/
+dist/
+db_backups/*.sql
+db_backups/*.dump
+db_backups/*.zip
+*.log
+.pnpm-store/
