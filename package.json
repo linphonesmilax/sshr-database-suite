@@ -1,6 +1,6 @@
 {
   "name": "sshr-database-suite",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Electron suite for SSHR database migrate, backup, and restore",
   "main": "./out/main/index.js",
   "homepage": "https://github.com/linphonesmilax/sshr-database-suite",
