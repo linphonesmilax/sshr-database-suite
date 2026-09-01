@@ -17,16 +17,13 @@ pnpm typecheck    # both tsconfig projects
 ## Installers (Linux)
 
 ```bash
-pnpm dist:linux      # build AppImage + deb locally
+pnpm dist:linux      # build AppImage locally
 pnpm release:linux   # build and publish to GitHub Releases (needs GH_TOKEN)
 ```
 
 Output in `release/`:
 
-- `SSHR-Database-Suite-<version>-x86_64.AppImage` — preferred for auto-updates
-- `sshr-database-suite_<version>_amd64.deb`
-
-`.deb` build requires `binutils` (`ar`) on the build machine.
+- `SSHR-Database-Suite-<version>-x86_64.AppImage` only (no .deb — it cannot auto-update)
 
 ## Auto-updates
 
@@ -53,9 +50,8 @@ Do not leave placeholder strings — pnpm 11 treats unapproved scripts as errors
 Lives in `package.json` `build` field. Key settings:
 
 - `productName`: SSHR Database Suite
-- Linux targets: AppImage + deb
+- Linux target: AppImage only (GitHub space + auto-update)
 - `publish`: GitHub provider
-- `deb.depends`: `postgresql-client`, `ca-certificates`
 - Packaged backup path: `~/Documents/SSHR Database Suite/db_backups`
 
 ## Do not commit

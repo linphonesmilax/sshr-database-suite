@@ -74,7 +74,7 @@ Long-running work: invoke returns immediately; stream `job:started` / `job:log` 
 pnpm install
 pnpm dev              # development
 pnpm typecheck        # verify types
-pnpm dist:linux       # AppImage + .deb in release/
+pnpm dist:linux       # AppImage in release/
 pnpm release:linux    # build + publish to GitHub Releases (needs GH_TOKEN)
 ```
 

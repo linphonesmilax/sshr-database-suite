@@ -4,14 +4,13 @@ Self-contained Electron app for SSHR database **backup**, **restore**, and **mig
 
 ## For your friend (Ubuntu install)
 
-Send them **one file** from the `release/` folder after you build:
+Send them the **AppImage** from the GitHub Release (or `release/` after you build):
 
-| File | How to install |
-|------|----------------|
-| **`SSHR-Database-Suite-1.0.0-x86_64.AppImage`** (recommended) | Right-click → Properties → **Allow executing as program**, then double-click. Or: `chmod +x SSHR-Database-Suite-*.AppImage` and run it. |
-| **`sshr-database-suite_1.0.0_amd64.deb`** | Double-click to open in Software Install, or: `sudo apt install ./sshr-database-suite_*.deb` |
+**`SSHR-Database-Suite-<version>-x86_64.AppImage`**
 
-The `.deb` installer pulls in **PostgreSQL client tools** automatically. With the AppImage, they need:
+1. Right-click → Properties → **Allow executing as program**, then double-click.  
+   Or: `chmod +x SSHR-Database-Suite-*.AppImage` and run it.
+2. If it does not start:
 
 ```bash
 sudo apt update
@@ -20,6 +19,7 @@ sudo apt install postgresql-client libfuse2
 
 (`libfuse2` is required on newer Ubuntu so the AppImage can launch.)
 
+We only ship AppImage. It can auto-update. A `.deb` cannot, and would waste GitHub storage.
 ### Migrate (optional)
 
 Backup and restore work out of the box once `postgresql-client` is installed. **Migrate** also needs:
@@ -43,7 +43,7 @@ Backup and restore work out of the box once `postgresql-client` is installed. **
 database-manage/
   build/icons/    # app icon
   db_backups/     # default dump dir (dev mode)
-  release/        # AppImage + .deb output
+  release/        # AppImage output
   src/main/       # migrate.ts, databases.ts, jobs, IPC
   src/renderer/   # UI
 ```
@@ -80,8 +80,7 @@ pnpm dist:linux
 
 Output in `release/`:
 
-- `SSHR-Database-Suite-<version>-x86_64.AppImage` (**use this for auto-updates**)
-- `sshr-database-suite_<version>_amd64.deb` (build machine needs `sudo apt install binutils`)
+- `SSHR-Database-Suite-<version>-x86_64.AppImage`
 
 ## Auto-updates (GitHub Releases)
 
@@ -109,9 +108,7 @@ export GH_TOKEN=ghp_your_token_here
 pnpm release:linux
 ```
 
-That uploads the AppImage (and `.deb`) to a GitHub Release. Friends on the AppImage get a banner → download → **Restart now**.
-
-**Note:** Auto-update works reliably for **AppImage**. The `.deb` is still fine to hand out, but friends on `.deb` should reinstall newer packages manually (or switch to AppImage).
+That uploads the AppImage to a GitHub Release. Friends get a toast → download → **Restart now**.
 
 **Requirements for auto-update:**
 
