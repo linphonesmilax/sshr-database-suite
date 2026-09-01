@@ -57,6 +57,8 @@ function createWindow(): void {
 }
 
 function registerIpc(): void {
+  ipcMain.handle('app:getVersion', () => app.getVersion())
+
   ipcMain.handle('settings:get', () => loadSettings())
 
   ipcMain.handle('settings:set', (_event, partial: Partial<AppSettings>) => {

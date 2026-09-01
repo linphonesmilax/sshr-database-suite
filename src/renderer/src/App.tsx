@@ -24,7 +24,7 @@ import {
   themeLabel,
   type ThemePreference
 } from './lib/theme'
-import { UpdateBanner } from './components/UpdateBanner'
+import { UpdateToast } from './components/UpdateToast'
 
 const nav = [
   { to: '/', label: 'Dashboard', end: true, icon: LayoutDashboard },
@@ -48,6 +48,11 @@ function ThemeIcon({ preference }: { preference: ThemePreference }) {
 function Shell() {
   const { job, settings } = useApp()
   const [themePref, setThemePref] = useState<ThemePreference>(getStoredTheme)
+  const [appVersion, setAppVersion] = useState<string>('')
+
+  useEffect(() => {
+    void window.api.getVersion().then(setAppVersion)
+  }, [])
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: light)')
@@ -70,6 +75,9 @@ function Shell() {
           <p className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
             Database Suite
           </p>
+          {appVersion ? (
+            <p className="mt-2 font-mono text-[11px] text-[var(--text-muted)]">v{appVersion}</p>
+          ) : null}
         </div>
         <nav aria-label="Main navigation" className="flex flex-1 flex-col gap-1">
           {nav.map((item) => {
@@ -119,11 +127,11 @@ function Shell() {
           </button>
         </div>
       </aside>
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <UpdateBanner />
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         <div className="min-h-0 flex-1 overflow-auto p-8">
           <Outlet />
         </div>
+        <UpdateToast />
       </main>
     </div>
   )

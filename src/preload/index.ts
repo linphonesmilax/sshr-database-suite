@@ -12,6 +12,7 @@ import type {
 export type Unsubscribe = () => void
 
 const api = {
+  getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
   getSettings: (): Promise<AppSettings> => ipcRenderer.invoke('settings:get'),
   setSettings: (partial: Partial<AppSettings>): Promise<AppSettings> =>
     ipcRenderer.invoke('settings:set', partial),

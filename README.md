@@ -123,6 +123,16 @@ If you already have a draft: open [Releases](https://github.com/linphonesmilax/s
 
 Do not put `GH_TOKEN` inside the app. Tokens stay on your machine for `pnpm release:linux` only.
 
+### Managing old releases (save GitHub space)
+
+Keep only the latest release. Delete older ones:
+
+1. Open [Releases](https://github.com/linphonesmilax/sshr-database-suite/releases)
+2. Open an old release → **Delete** (trash icon / Delete release)
+3. Optionally delete the git tag too when prompted
+
+Friends only need the **latest** AppImage / `latest-linux.yml`. Old releases are not required for auto-update.
+
 ## Typical workflow
 
 1. **Backup** → dumps into `db_backups/` (dev) or Documents folder (installed app)
