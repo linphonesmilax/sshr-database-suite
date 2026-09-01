@@ -5,7 +5,8 @@ import type {
   JobInput,
   JobLogEvent,
   JobStartedEvent,
-  ReadinessReport
+  ReadinessReport,
+  UpdateStatus
 } from '../shared/types'
 
 export type Unsubscribe = () => void
@@ -25,6 +26,14 @@ const api = {
   ): Promise<{ id: string; commandPreview: string }> =>
     ipcRenderer.invoke('job:run', input),
   cancelJob: (): Promise<boolean> => ipcRenderer.invoke('job:cancel'),
+  checkForUpdates: (): Promise<UpdateStatus> => ipcRenderer.invoke('update:check'),
+  installUpdate: (): Promise<boolean> => ipcRenderer.invoke('update:install'),
+  onUpdateStatus: (handler: (status: UpdateStatus) => void): Unsubscribe => {
+    const listener = (_: Electron.IpcRendererEvent, payload: UpdateStatus) =>
+      handler(payload)
+    ipcRenderer.on('update:status', listener)
+    return () => ipcRenderer.removeListener('update:status', listener)
+  },
   onJobStarted: (handler: (event: JobStartedEvent) => void): Unsubscribe => {
     const listener = (_: Electron.IpcRendererEvent, payload: JobStartedEvent) =>
       handler(payload)

@@ -6,6 +6,7 @@ import { loadSettings, saveSettings } from './settings'
 import { scanReadiness } from './readiness'
 import { cancelActiveJob, runJob } from './jobs'
 import { bootstrapCliPath } from './process'
+import { initAutoUpdater } from './updater'
 
 // Linux userland / restricted environments often lack a working chrome-sandbox.
 app.commandLine.appendSwitch('no-sandbox')
@@ -14,8 +15,10 @@ if (process.env.SSHR_DB_SUITE_DISABLE_GPU === '1') {
   app.commandLine.appendSwitch('disable-gpu')
 }
 
+let mainWindow: BrowserWindow | null = null
+
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1280,
     height: 860,
     minWidth: 960,
@@ -32,7 +35,11 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow?.show()
+  })
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -94,6 +101,7 @@ app.whenReady().then(() => {
   bootstrapCliPath()
   registerIpc()
   createWindow()
+  initAutoUpdater()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

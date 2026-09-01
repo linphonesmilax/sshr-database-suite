@@ -75,20 +75,45 @@ SSHR_DB_SUITE_DISABLE_GPU=1 pnpm dev
 
 ```bash
 pnpm install
-./node_modules/.bin/electron-vite build
-./node_modules/.bin/electron-builder --linux
+pnpm dist:linux
 ```
 
 Output in `release/`:
 
-- `SSHR-Database-Suite-<version>-x86_64.AppImage`
+- `SSHR-Database-Suite-<version>-x86_64.AppImage` (**use this for auto-updates**)
 - `sshr-database-suite_<version>_amd64.deb` (build machine needs `sudo apt install binutils`)
 
-Shortcut script:
+## Auto-updates (GitHub Releases)
+
+The installed **AppImage** checks GitHub for new versions on launch (`electron-updater`).
+
+Publish target: `linphonesmilax/sshr-database-suite` (see `package.json` `build.publish`).
+
+### One-time setup
+
+1. Create the GitHub repo (public is simplest for updates).
+2. Create a classic PAT with `repo` scope: [https://github.com/settings/tokens](https://github.com/settings/tokens)
+3. Export it when publishing:
 
 ```bash
-pnpm dist:linux
+export GH_TOKEN=ghp_your_token_here
 ```
+
+### Ship an update
+
+1. Bump `"version"` in `package.json` (e.g. `1.0.0` → `1.0.1`)
+2. Commit and push
+3. Build + publish:
+
+```bash
+pnpm release:linux
+```
+
+That uploads the AppImage (and `.deb`) to a GitHub Release. Friends on the AppImage get a banner → download → **Restart now**.
+
+**Note:** Auto-update works reliably for **AppImage**. The `.deb` is still fine to hand out, but friends on `.deb` should reinstall newer packages manually (or switch to AppImage).
+
+If the repo is **private**, set `GH_TOKEN` (or `GITHUB_TOKEN`) in the environment for the *running* app as well, or keep the repo public.
 
 ## Typical workflow
 

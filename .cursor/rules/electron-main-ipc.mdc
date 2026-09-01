@@ -44,3 +44,9 @@ Streaming events (main → renderer): `job:started`, `job:log`, `job:ended`.
 - Add `.sh` scripts — TypeScript orchestration only
 - Put `fs`, `child_process`, or `ipcRenderer` in renderer code
 - Block `ipcMain.handle` on long-running CLI work
+
+## Auto-updates
+
+- Logic in `updater.ts`; started from `index.ts` after window create
+- IPC: `update:check`, `update:install`, event `update:status`
+- Packaged AppImage only; GitHub Releases via `build.publish`

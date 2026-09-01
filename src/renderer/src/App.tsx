@@ -24,6 +24,7 @@ import {
   themeLabel,
   type ThemePreference
 } from './lib/theme'
+import { UpdateBanner } from './components/UpdateBanner'
 
 const nav = [
   { to: '/', label: 'Dashboard', end: true, icon: LayoutDashboard },
@@ -118,8 +119,11 @@ function Shell() {
           </button>
         </div>
       </aside>
-      <main className="min-w-0 flex-1 overflow-auto p-8">
-        <Outlet />
+      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <UpdateBanner />
+        <div className="min-h-0 flex-1 overflow-auto p-8">
+          <Outlet />
+        </div>
       </main>
     </div>
   )

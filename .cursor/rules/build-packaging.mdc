@@ -17,15 +17,23 @@ pnpm typecheck    # both tsconfig projects
 ## Installers (Linux)
 
 ```bash
-pnpm dist:linux   # electron-vite build && electron-builder --linux
+pnpm dist:linux      # build AppImage + deb locally
+pnpm release:linux   # build and publish to GitHub Releases (needs GH_TOKEN)
 ```
 
 Output in `release/`:
 
-- `SSHR-Database-Suite-<version>-x86_64.AppImage`
+- `SSHR-Database-Suite-<version>-x86_64.AppImage` — preferred for auto-updates
 - `sshr-database-suite_<version>_amd64.deb`
 
 `.deb` build requires `binutils` (`ar`) on the build machine.
+
+## Auto-updates
+
+- Provider: GitHub (`build.publish` → `linphonesmilax/sshr-database-suite`)
+- Runtime: `electron-updater` in `src/main/updater.ts` (packaged AppImage only)
+- Bump `package.json` version, then `pnpm release:linux`
+- Private repos need `GH_TOKEN` for publish and for clients to download
 
 ## pnpm 11 allowBuilds
 
@@ -46,6 +54,7 @@ Lives in `package.json` `build` field. Key settings:
 
 - `productName`: SSHR Database Suite
 - Linux targets: AppImage + deb
+- `publish`: GitHub provider
 - `deb.depends`: `postgresql-client`, `ca-certificates`
 - Packaged backup path: `~/Documents/SSHR Database Suite/db_backups`
 

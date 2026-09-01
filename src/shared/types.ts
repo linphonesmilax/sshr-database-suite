@@ -170,3 +170,20 @@ export interface JobEndedEvent {
   signal: string | null
   cancelled: boolean
 }
+
+/** Auto-update lifecycle for GitHub Releases (electron-updater). */
+export type UpdatePhase =
+  | 'idle'
+  | 'checking'
+  | 'available'
+  | 'not-available'
+  | 'downloading'
+  | 'ready'
+  | 'error'
+
+export interface UpdateStatus {
+  phase: UpdatePhase
+  version?: string
+  percent?: number
+  message?: string
+}

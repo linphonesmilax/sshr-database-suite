@@ -11,3 +11,4 @@ release/
 db_backups/*.sql
 db_backups/*.dump
 db_backups/*.zip
+GH_TOKEN.md

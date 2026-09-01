@@ -75,9 +75,12 @@ pnpm install
 pnpm dev              # development
 pnpm typecheck        # verify types
 pnpm dist:linux       # AppImage + .deb in release/
+pnpm release:linux    # build + publish to GitHub Releases (needs GH_TOKEN)
 ```
 
 Friend install instructions: see [README.md](README.md).
+
+Auto-updates: AppImage checks GitHub Releases via `src/main/updater.ts`. Bump `version` in `package.json` before each release.
 
 ## Cursor rules
 
@@ -87,4 +90,4 @@ Project-specific agent rules live in `.cursor/rules/`:
 - `electron-main-ipc.mdc` — main + preload
 - `react-renderer-ui.mdc` — renderer pages and UX
 - `shared-types-jobs.mdc` — types and job unions
-- `build-packaging.mdc` — dist and pnpm config
+- `build-packaging.mdc` — dist, publish, and pnpm config
